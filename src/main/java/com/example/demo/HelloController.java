@@ -24,7 +24,15 @@ public class HelloController {
     @FXML
     private ComboBox<String> algorithmBox;
     @FXML
+    private ComboBox<Integer> sizeBox;
+    @FXML
     private Button sortButton;
+    @FXML
+    private Button clearButton;
+    @FXML
+    private Label complexityLabel;
+    @FXML
+    private Label timeLabel;
 
     private static final int WIDTH = 500;
     private static final int HEIGHT = 300;
@@ -33,17 +41,16 @@ public class HelloController {
     private Timeline timeline;
 
     @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
-
-    @FXML
     public void initialize() {
         gc = canvas.getGraphicsContext2D();
         algorithmBox.getItems().addAll("TimSort", "QuickSort", "MergeSort", "HeapSort", "ShellSort");
         algorithmBox.setValue("TimSort");
+        sizeBox.getItems().addAll(20, 50, 100);
+        sizeBox.setValue(50);
         sortButton.setOnAction(e -> runSort(algorithmBox.getValue()));
-        generateArray(50);
+        clearButton.setOnAction(e -> resetArray());
+        sizeBox.setOnAction(e -> generateArray(sizeBox.getValue()));
+        generateArray(sizeBox.getValue());
     }
 
     private void generateArray(int size) {
@@ -70,109 +77,48 @@ public class HelloController {
         timeline.play();
 
         new Thread(() -> {
+            SortingAlgorithm sorter;
+            String complexity;
+            long startTime = System.currentTimeMillis();
             switch (algorithm) {
-                case "TimSort":
-                    Arrays.sort(array);
-                    break;
-                case "QuickSort":
-                    quickSort(0, array.length - 1);
-                    break;
-                case "MergeSort":
-                    mergeSort(0, array.length - 1);
-                    break;
-                case "HeapSort":
-                    heapSort();
-                    break;
-                case "ShellSort":
-                    shellSort();
-                    break;
+                case "QuickSort" -> {
+                    sorter = new QuickSort();
+                    complexity = "O(n log n) average, O(n^2) worst case";
+                }
+                case "MergeSort" -> {
+                    sorter = new MergeSort();
+                    complexity = "O(n log n) in all cases";
+                }
+                case "HeapSort" -> {
+                    sorter = new HeapSort();
+                    complexity = "O(n log n)";
+                }
+                case "ShellSort" -> {
+                    sorter = new ShellSort();
+                    complexity = "O(n log n) best/average, O(n^2) worst case";
+                }
+                default -> {
+                    sorter = new TimSort();
+                    complexity = "O(n log n)";
+                }
             }
+            sorter.sort(array);
+            long endTime = System.currentTimeMillis();
+            long elapsedTime = endTime - startTime;
+
             timeline.stop();
             drawArray();
+            final String finalComplexity = complexity;
+            javafx.application.Platform.runLater(() -> {
+                complexityLabel.setText("Time Complexity: " + finalComplexity);
+                timeLabel.setText("Execution Time: " + elapsedTime + " ms");
+            });
         }).start();
     }
 
-    private void quickSort(int low, int high) {
-        if (low < high) {
-            int pi = partition(low, high);
-            quickSort(low, pi - 1);
-            quickSort(pi + 1, high);
-        }
-    }
-
-    private int partition(int low, int high) {
-        int pivot = array[high];
-        int i = low - 1;
-        for (int j = low; j < high; j++) {
-            if (array[j] < pivot) {
-                i++;
-                swap(i, j);
-            }
-        }
-        swap(i + 1, high);
-        return i + 1;
-    }
-
-    private void mergeSort(int left, int right) {
-        if (left < right) {
-            int mid = left + (right - left) / 2;
-            mergeSort(left, mid);
-            mergeSort(mid + 1, right);
-            merge(left, mid, right);
-        }
-    }
-
-    private void merge(int left, int mid, int right) {
-        int[] temp = Arrays.copyOfRange(array, left, right + 1);
-        int i = 0, j = mid - left + 1, k = left;
-        while (i <= mid - left && j < temp.length) {
-            array[k++] = (temp[i] < temp[j]) ? temp[i++] : temp[j++];
-        }
-        while (i <= mid - left) {
-            array[k++] = temp[i++];
-        }
-        while (j < temp.length) {
-            array[k++] = temp[j++];
-        }
-    }
-
-    private void heapSort() {
-        int n = array.length;
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(n, i);
-        }
-        for (int i = n - 1; i > 0; i--) {
-            swap(0, i);
-            heapify(i, 0);
-        }
-    }
-
-    private void heapify(int n, int i) {
-        int largest = i, left = 2 * i + 1, right = 2 * i + 2;
-        if (left < n && array[left] > array[largest]) largest = left;
-        if (right < n && array[right] > array[largest]) largest = right;
-        if (largest != i) {
-            swap(i, largest);
-            heapify(n, largest);
-        }
-    }
-
-    private void shellSort() {
-        for (int gap = array.length / 2; gap > 0; gap /= 2) {
-            for (int i = gap; i < array.length; i++) {
-                int temp = array[i], j = i;
-                while (j >= gap && array[j - gap] > temp) {
-                    array[j] = array[j - gap];
-                    j -= gap;
-                }
-                array[j] = temp;
-            }
-        }
-    }
-
-    private void swap(int i, int j) {
-        int temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+    private void resetArray() {
+        generateArray(sizeBox.getValue());
+        complexityLabel.setText("");
+        timeLabel.setText("");
     }
 }
