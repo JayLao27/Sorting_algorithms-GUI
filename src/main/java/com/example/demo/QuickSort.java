@@ -38,7 +38,7 @@ public class QuickSort extends SortingAlgorithm {
 
     private void visualize(int[] array) {
         try {
-            Thread.sleep(50); // Delay for visualization
+            Thread.sleep(20);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

@@ -1,18 +1,22 @@
 package com.example.demo;
 
-public class MergeSort extends SortingAlgorithm {
+public class ModifiedMerge extends SortingAlgorithm {
     @Override
     public void sort(int[] array) {
-        mergeSort(array, 0, array.length - 1);
+        hybridMergeSort(array, 0, array.length - 1);
     }
 
-    private void mergeSort(int[] array, int left, int right) {
+    private void hybridMergeSort(int[] array, int left, int right) {
+        if (right - left + 1 <= 10) {
+            insertionSort(array, left, right);
+            return;
+        }
+
         if (left < right) {
             int mid = left + (right - left) / 2;
-            mergeSort(array, left, mid);
-            mergeSort(array, mid + 1, right);
+            hybridMergeSort(array, left, mid);
+            hybridMergeSort(array, mid + 1, right);
             merge(array, left, mid, right);
-            visualize(array);
         }
     }
 
@@ -50,6 +54,18 @@ public class MergeSort extends SortingAlgorithm {
             j++;
             k++;
             visualize(array);
+        }
+    }
+
+    private void insertionSort(int[] array, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            int key = array[i];
+            int j = i - 1;
+            while (j >= left && array[j] > key) {
+                array[j + 1] = array[j];
+                j--;
+            }
+            array[j + 1] = key;
         }
     }
 

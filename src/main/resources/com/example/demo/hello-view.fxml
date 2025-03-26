@@ -12,16 +12,17 @@
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
-
-    <Label fx:id="welcomeText" stylesheets="@CSS/java.css" text="Sorting Visualizer" />
-    <Label fx:id="complexityLabel" stylesheets="@CSS/java.css" text="Time complexity" />
+    <Label id="title" fx:id="welcomeText" stylesheets="@CSS/java.css" text="Sorting Visualizer" />
+    <Label id="title" fx:id="title" stylesheets="@CSS/java.css" text="Title" />
+    <Label id="complexity" fx:id="complexityLabel" stylesheets="@CSS/java.css" text="Time complexity" />
     <Label fx:id="timeLabel" stylesheets="@CSS/java.css" text="Execution Time" />
-    <Canvas fx:id="canvas" height="400" width="1500" />
+    <Canvas id="sizeBox" fx:id="canvas" height="400" width="1500" />
     <HBox alignment="CENTER" prefHeight="25.0" prefWidth="311.0">
         <children>
             <Button fx:id="sortButton" stylesheets="@CSS/java.css" text="Sort" />
             <ComboBox fx:id="sizeBox" stylesheets="@CSS/java.css" />
             <ComboBox fx:id="algorithmBox" stylesheets="@CSS/java.css" />
+         <ComboBox id="sizeBox" fx:id="algorithmBox1" stylesheets="@CSS/java.css" />
             <Button id="clearButton" fx:id="clearButton" stylesheets="@CSS/java.css" text="Clear" />
         </children>
     </HBox>

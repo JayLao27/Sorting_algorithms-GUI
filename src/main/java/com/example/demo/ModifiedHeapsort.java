@@ -1,17 +1,27 @@
 package com.example.demo;
 
-public class HeapSort extends SortingAlgorithm {
+public class ModifiedHeapsort extends SortingAlgorithm {
     @Override
     public void sort(int[] array) {
+        hybridHeapSort(array);
+    }
+
+    private void hybridHeapSort(int[] array) {
         int n = array.length;
 
-        // Build max heap
-        for (int i = n / 2 - 1; i >= 0; i--) {
-            heapify(array, n, i);
+        if (n <= 18) { // Use insertion sort for small arrays
+            insertionSort(array, 0, n - 1);
             visualize(array);
+            return;
         }
 
-        // Extract elements from heap one by one
+        // Build max heap properly
+        for (int i = n / 2 - 1; i >= 0; i--) {
+            heapify(array, n, i);
+        }
+        visualize(array);
+
+        // Extract elements from the heap
         for (int i = n - 1; i > 0; i--) {
             swap(array, 0, i);
             heapify(array, i, 0);
@@ -35,6 +45,19 @@ public class HeapSort extends SortingAlgorithm {
         if (largest != i) {
             swap(array, i, largest);
             heapify(array, n, largest);
+        }
+    }
+
+    private void insertionSort(int[] array, int left, int right) {
+        for (int i = left + 1; i <= right; i++) {
+            int key = array[i];
+            int j = i - 1;
+            while (j >= left && array[j] > key) {
+                array[j + 1] = array[j];
+                j--;
+            }
+            array[j + 1] = key;
+            visualize(array);
         }
     }
 

@@ -1,13 +1,15 @@
 package com.example.demo;
 
-import java.util.Arrays;
-
-public class TimSort extends SortingAlgorithm {
-    private static final int RUN = 32;
-
+public class ModifiedTimsort extends SortingAlgorithm {
     @Override
     public void sort(int[] array) {
+        optimizedTimSort(array);
+    }
+
+    private void optimizedTimSort(int[] array) {
         int n = array.length;
+        int RUN = findOptimalRunSize(n);
+
         for (int i = 0; i < n; i += RUN) {
             insertionSort(array, i, Math.min(i + RUN - 1, n - 1));
             visualize(array);
@@ -18,11 +20,20 @@ public class TimSort extends SortingAlgorithm {
                 int mid = left + size - 1;
                 int right = Math.min(left + 2 * size - 1, n - 1);
                 if (mid < right) {
-                    merge(array, left, mid, right);
+                    inPlaceMerge(array, left, mid, right);
                     visualize(array);
                 }
             }
         }
+    }
+
+    private int findOptimalRunSize(int n) {
+        int r = 0;
+        while (n >= 64) {
+            r |= (n & 1);
+            n >>= 1;
+        }
+        return n + r;
     }
 
     private void insertionSort(int[] array, int left, int right) {
@@ -39,38 +50,34 @@ public class TimSort extends SortingAlgorithm {
         }
     }
 
-    private void merge(int[] array, int left, int mid, int right) {
-        int leftSize = mid - left + 1;
-        int rightSize = right - mid;
-        int[] leftArray = new int[leftSize];
-        int[] rightArray = new int[rightSize];
+    private void inPlaceMerge(int[] array, int left, int mid, int right) {
+        int start2 = mid + 1;
+        if (array[mid] <= array[start2]) return; // Already sorted
 
-        System.arraycopy(array, left, leftArray, 0, leftSize);
-        System.arraycopy(array, mid + 1, rightArray, 0, rightSize);
-
-        int i = 0, j = 0, k = left;
-        while (i < leftSize && j < rightSize) {
-            if (leftArray[i] <= rightArray[j]) {
-                array[k++] = leftArray[i++];
+        while (left <= mid && start2 <= right) {
+            if (array[left] <= array[start2]) {
+                left++;
             } else {
-                array[k++] = rightArray[j++];
-            }
-            visualize(array);
-        }
+                int value = array[start2];
+                int index = start2;
 
-        while (i < leftSize) {
-            array[k++] = leftArray[i++];
-            visualize(array);
-        }
-        while (j < rightSize) {
-            array[k++] = rightArray[j++];
+                while (index != left) {
+                    array[index] = array[index - 1];
+                    index--;
+                }
+                array[left] = value;
+
+                left++;
+                mid++;
+                start2++;
+            }
             visualize(array);
         }
     }
 
     private void visualize(int[] array) {
         try {
-            Thread.sleep(20); // Delay for visualization
+            Thread.sleep(18); // Delay for visualization
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }

@@ -1,12 +1,19 @@
 package com.example.demo;
 
-public class ShellSort extends SortingAlgorithm {
+public class ModifiedShellsort extends SortingAlgorithm {
     @Override
     public void sort(int[] array) {
-        int n = array.length;
-        int[] gaps = generateGaps(n);
+        optimizedShellSort(array);
+    }
 
-        for (int gap : gaps) {
+    private void optimizedShellSort(int[] array) {
+        int n = array.length;
+        int[] gaps = {1, 4, 18, 23, 57, 132, 301, 701}; // Tokuda's sequence
+
+        for (int g = gaps.length - 1; g >= 0; g--) {
+            int gap = gaps[g];
+            if (gap >= n) continue; // Skip gaps larger than array size
+
             for (int i = gap; i < n; i++) {
                 int temp = array[i];
                 int j = i;
@@ -19,18 +26,6 @@ public class ShellSort extends SortingAlgorithm {
                 visualize(array); // Visualization step after insertion
             }
         }
-    }
-
-    private int[] generateGaps(int n) {
-        int k = 1, gap;
-        while ((gap = (int) (n / Math.pow(2, k))) > 0) {
-            k++;
-        }
-        int[] gaps = new int[k - 1];
-        for (int i = 0; i < gaps.length; i++) {
-            gaps[i] = (int) (n / Math.pow(2, i + 1));
-        }
-        return gaps;
     }
 
     private void visualize(int[] array) {
