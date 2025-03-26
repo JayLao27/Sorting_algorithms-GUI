@@ -1,0 +1,26 @@
+#timeLabel{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+#sortButton{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    background-color: yellow;
+}
+#clearButton{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+#sizeBox{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}
+#algorithmBox{
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+}

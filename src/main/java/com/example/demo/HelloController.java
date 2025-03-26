@@ -34,9 +34,11 @@ public class HelloController {
     @FXML
     private Label timeLabel;
 
-    private static final int WIDTH = 500;
+
+    private static final int WIDTH = 1500;
     private static final int HEIGHT = 300;
     private int[] array;
+    private int[] initialArray;
     private GraphicsContext gc;
     private Timeline timeline;
 
@@ -56,8 +58,10 @@ public class HelloController {
     private void generateArray(int size) {
         Random rand = new Random();
         array = new int[size];
+        initialArray = new int[size];
         for (int i = 0; i < size; i++) {
             array[i] = rand.nextInt(HEIGHT - 50) + 10;
+            initialArray[i] = array[i];
         }
         drawArray();
     }
@@ -95,7 +99,7 @@ public class HelloController {
                 }
                 case "ShellSort" -> {
                     sorter = new ShellSort();
-                    complexity = "O(n log n) best/average, O(n^2) worst case";
+                    complexity = "O(n log n) best, O(n^2) worst case/average";
                 }
                 default -> {
                     sorter = new TimSort();
@@ -107,18 +111,26 @@ public class HelloController {
             long elapsedTime = endTime - startTime;
 
             timeline.stop();
-            drawArray();
-            final String finalComplexity = complexity;
-            javafx.application.Platform.runLater(() -> {
-                complexityLabel.setText("Time Complexity: " + finalComplexity);
-                timeLabel.setText("Execution Time: " + elapsedTime + " ms");
-            });
+
+            // Add a delay before updating the UI
+            Timeline delayTimeline = new Timeline(new KeyFrame(Duration.millis(500), event -> {
+                drawArray();
+                final String finalComplexity = complexity;
+                javafx.application.Platform.runLater(() -> {
+                    complexityLabel.setText("Time Complexity: " + finalComplexity);
+                    timeLabel.setText("Execution Time: " + elapsedTime + " ms");
+                });
+            }));
+            delayTimeline.setCycleCount(1);
+            delayTimeline.play();
         }).start();
     }
 
     private void resetArray() {
-        generateArray(sizeBox.getValue());
+        System.arraycopy(initialArray, 0, array, 0, initialArray.length);
+        drawArray();
         complexityLabel.setText("");
         timeLabel.setText("");
+        timeline.stop();
     }
 }
